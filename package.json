@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8000",
+  "proxy": "http://localhost:8001",
   "dependencies": {
 
     "@paypal/react-paypal-js": "^7.8.2",
@@ -25,7 +25,7 @@
   },
   "scripts": {
 
-    "start": "set PORT=8000 && react-scripts start",
+    "start": "set PORT= && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
