@@ -1,0 +1,29 @@
+name: Deploy node app to production
+on:
+  push:
+    branches:
+       - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source 
+        uses: actions/checkout@v4
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build Docker image
+        run: docker build -t anunaa02/front .
+      - name: Publish Docker image
+        run: docker push anunaa02/front:latest    
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull image from DockerHub
+        run: docker pull anunaa02/front:latest
+      - name: Stop existing container
+        run: docker stop back || true # Continue if container doesn't exist
+      - name: Remove existing container
+        run: docker rm back || true # Continue if container doesn't exist hghghg
+      - name: Run Docker container
+        run: docker run -d -p 8000:8000 --name front -e MONGO_PASS='${{secrets.MONGO_PASS}}' anunaa02/front
