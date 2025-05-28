@@ -16,9 +16,12 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t anunaa02/front:latest \
-          --build-arg REACT_APP_NODE_ENV=production \
-          --build-arg REACT_APP_SERVER_BASE_URL=${{ secrets.REACT_APP_SERVER_BASE_URL }} .
+  run: |
+    docker build -t anunaa02/front:latest \
+      --build-arg REACT_APP_NODE_ENV=production \
+      --build-arg REACT_APP_SERVER_BASE_URL=${{ secrets.REACT_APP_SERVER_BASE_URL }} \
+      .
+
 
       - name: Publish Docker image
         run: docker push anunaa02/front:latest
