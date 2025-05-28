@@ -36,6 +36,6 @@ jobs:
           docker rm front || true
 
       - name: Run new Docker container
-        run: docker run -d -p 8000:8000 --name front \
+        run: docker run -d -p 3000:80 --name front \
           -e MONGO_PASS=${{ secrets.MONGO_PASS }} \
           anunaa02/front:latest
