@@ -1,29 +1,41 @@
 name: Deploy node app to production
+
 on:
   push:
     branches:
-       - main
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source 
+      - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Login to DockerHub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Build Docker image
-        run: docker build -t anunaa02/front .
+        run: docker build -t anunaa02/front:latest \
+          --build-arg REACT_APP_NODE_ENV=production \
+          --build-arg REACT_APP_SERVER_BASE_URL=${{ secrets.REACT_APP_SERVER_BASE_URL }} .
+
       - name: Publish Docker image
-        run: docker push anunaa02/front:latest    
+        run: docker push anunaa02/front:latest
+
   deploy:
     needs: build
     runs-on: self-hosted
     steps:
       - name: Pull image from DockerHub
         run: docker pull anunaa02/front:latest
-      - name: Stop existing container
-        run: docker stop back || true # Continue if container doesn't exist
-      - name: Remove existing container
-        run: docker rm back || true # Continue if container doesn't exist hghghg
-      - name: Run Docker container
-        run: docker run -d -p 8000:8000 --name front -e MONGO_PASS='${{secrets.MONGO_PASS}}' anunaa02/front
+
+      - name: Stop and remove old container if exists
+        run: |
+          docker stop front || true
+          docker rm front || true
+
+      - name: Run new Docker container
+        run: docker run -d -p 8000:8000 --name front \
+          -e MONGO_PASS=${{ secrets.MONGO_PASS }} \
+          anunaa02/front:latest
